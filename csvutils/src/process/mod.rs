@@ -1,4 +1,5 @@
 pub mod dedup;
+pub mod filter;
 pub mod merge;
 
 #[derive(Debug, PartialEq)]

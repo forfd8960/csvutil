@@ -26,6 +26,8 @@ fn handle_sub_commands(opts: Options) -> anyhow::Result<()> {
         }
         Merge(merge_otps) => {
             println!("{:?}", merge_otps);
+            let result = process::merge::process_merge(merge_otps.inputs, merge_otps.output)?;
+            println!("process_merge: {:?}", result);
         }
     }
 
