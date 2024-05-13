@@ -23,6 +23,12 @@ fn handle_sub_commands(opts: Options) -> anyhow::Result<()> {
         }
         Filter(filter_opts) => {
             println!("{:?}", filter_opts);
+            let result = process::filter::process_filter(
+                filter_opts.input,
+                filter_opts.output,
+                filter_opts.exps,
+            )?;
+            println!("process_filter: {:?}", result);
         }
         Merge(merge_otps) => {
             println!("{:?}", merge_otps);

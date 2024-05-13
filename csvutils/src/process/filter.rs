@@ -9,16 +9,7 @@ pub fn process_filter(input_csv: String, output: String, exps: Vec<String>) -> a
         return Err(anyhow!("empty exps"));
     }
 
-    let mut fieds = HashMap::new();
-    for e in exps {
-        let field_value: Vec<String> = e.split('=').map(|v| v.to_string()).collect();
-
-        if field_value.len() < 2 {
-            return Err(anyhow!("bad exp: {}", e));
-        }
-
-        fieds.insert(field_value[0].clone(), field_value[1].clone());
-    }
+    let fieds = parse_exps(exps)?;
 
     let mut idx_value = HashMap::new();
 
@@ -50,4 +41,19 @@ pub fn process_filter(input_csv: String, output: String, exps: Vec<String>) -> a
     write_csv(output, CSVResult::new(data, csv_data.headers))?;
 
     anyhow::Ok(())
+}
+
+fn parse_exps(exps: Vec<String>) -> anyhow::Result<HashMap<String, String>> {
+    let mut fieds = HashMap::new();
+    for e in exps {
+        let field_value: Vec<String> = e.split('=').map(|v| v.to_string()).collect();
+
+        if field_value.len() < 2 {
+            return Err(anyhow!("bad exp: {}", e));
+        }
+
+        fieds.insert(field_value[0].clone(), field_value[1].clone());
+    }
+
+    anyhow::Ok(fieds)
 }
