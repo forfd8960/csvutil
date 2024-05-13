@@ -1,4 +1,5 @@
 pub mod dedup;
+pub mod merge;
 
 #[derive(Debug, PartialEq)]
 pub struct CSVResult {
@@ -31,6 +32,18 @@ pub fn read_csv(input: &str) -> anyhow::Result<CSVResult> {
     anyhow::Ok(CSVResult::new(data, hdrs))
 }
 
+pub fn write_csv(path: String, csv_data: CSVResult) -> anyhow::Result<()> {
+    let mut writer = csv::Writer::from_path(path)?;
+    writer.write_record(csv_data.headers)?;
+
+    for data in csv_data.data {
+        writer.write_record(data)?;
+    }
+    writer.flush()?;
+
+    anyhow::Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -49,6 +62,23 @@ mod tests {
                 vec!["f1".to_string(), "f2".to_string(), "f3".to_string()]
             )
         );
+        anyhow::Ok(())
+    }
+
+    #[test]
+    fn test_write_csv() -> anyhow::Result<()> {
+        let input = "test1.csv";
+        let result = write_csv(
+            input.to_string(),
+            CSVResult::new(
+                vec![
+                    vec!["111".to_string(), "22".to_string(), "333".to_string()],
+                    vec!["888".to_string(), "999".to_string(), "666".to_string()],
+                ],
+                vec!["f1".to_string(), "f2".to_string(), "f3".to_string()],
+            ),
+        );
+        assert!(result.is_ok());
         anyhow::Ok(())
     }
 }
